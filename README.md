@@ -108,6 +108,30 @@ The architecture follows layered design and Object-Oriented Programming principl
 - Relations:
   - Uses `ClockEngine` as backend boundary.
 
+### presentation/streamlit_app.py
+- Purpose:
+  - Main Streamlit execution entrypoint.
+- Responsibilities:
+  - Delegate startup to `ClockUI`.
+- Relations:
+  - Imports and runs `main()` from `presentation/clock_ui.py`.
+
+### tests/test_circular_doubly_linked_list.py
+- Purpose:
+  - Validate the linked-list implementation behavior.
+- Responsibilities:
+  - Verify forward traversal, backward traversal, and strict circular linkage integrity.
+- Relations:
+  - Tests `CircularDoublyLinkedList` directly.
+
+### tests/test_clock_engine.py
+- Purpose:
+  - Validate clock transitions and edge cases.
+- Responsibilities:
+  - Verify second rollover, minute rollover, full-day rollover, and full backward rollover.
+- Relations:
+  - Tests `ClockEngine` using a fake time service.
+
 ---
 
 ## Conceptual Explanation
@@ -153,7 +177,13 @@ pip install streamlit
 2. Run UI from project root:
 
 ```bash
-streamlit run presentation/clock_ui.py
+streamlit run presentation/streamlit_app.py
+```
+
+3. Run unit tests:
+
+```bash
+python -m unittest discover -s tests -p "test_*.py"
 ```
 
 ---
