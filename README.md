@@ -171,7 +171,7 @@ A circular list models this naturally because the last node points to the first,
 1. Install dependencies:
 
 ```bash
-pip install streamlit
+pip install streamlit matplotlib
 ```
 
 2. Run UI from project root:
