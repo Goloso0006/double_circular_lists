@@ -193,3 +193,7 @@ python -m unittest discover -s tests -p "test_*.py"
 - Code is in English.
 - Comments are in Spanish, as requested.
 - UI is implemented only with Python + Streamlit.
+
+
+# execution
+./run_clock_app.bat
