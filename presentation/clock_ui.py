@@ -3,6 +3,8 @@ from __future__ import annotations
 import math
 import time
 
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
 import streamlit as st
@@ -28,6 +30,17 @@ class ClockUI:
         st.title("Reloj Analogico con Lista Circular Doble")
         st.caption("Simulacion orientada a objetos con estructura de datos circular")
 
+        if "manual_time" not in st.session_state:
+            current = self.__engine.get_current_time()
+            st.session_state.manual_time = current.to_24_hour_format()
+
+        st.session_state.manual_time = st.text_input(
+            "Hora manual (HH:MM:SS)",
+            value=st.session_state.manual_time,
+            max_chars=8,
+            help="Ejemplo: 14:35:09",
+        )
+
         col_start, col_stop, col_sync = st.columns(3)
 
         if col_start.button("Iniciar"):
@@ -35,7 +48,11 @@ class ClockUI:
         if col_stop.button("Pausar"):
             st.session_state.running = False
         if col_sync.button("Sincronizar"):
-            self.__engine.synchronize_with_system_time()
+            parsed_time = self.__parse_manual_time(st.session_state.manual_time)
+            if parsed_time is None:
+                st.error("Formato invalido. Usa HH:MM:SS con rangos 00-23:00-59:00-59.")
+            else:
+                self.__engine.synchronize(parsed_time)
 
         refresh_count = None
         if st.session_state.running:
@@ -45,12 +62,6 @@ class ClockUI:
 
         current_time = self.__engine.get_current_time()
         self.__render_analog_clock(current_time)
-        st.metric(label="Hora 24h", value=current_time.to_24_hour_format())
-        st.metric(label="Hora 12h", value=current_time.to_12_hour_format())
-
-        if st.button("Retroceder 1 segundo"):
-            self.__engine.move_backward_one_second()
-            st.rerun()
 
         if st.session_state.running and refresh_count is not None:
             last_refresh_count = st.session_state.get("last_refresh_count")
@@ -66,6 +77,22 @@ class ClockUI:
             st.rerun()
         else:
             st.session_state.pop("last_refresh_count", None)
+
+    @staticmethod
+    def __parse_manual_time(raw_value: str) -> ClockTime | None:
+        parts = raw_value.strip().split(":")
+        if len(parts) != 3 or not all(part.isdigit() for part in parts):
+            return None
+
+        hour, minute, second = (int(part) for part in parts)
+        if hour < 0 or hour > 23:
+            return None
+        if minute < 0 or minute > 59:
+            return None
+        if second < 0 or second > 59:
+            return None
+
+        return ClockTime(hour=hour, minute=minute, second=second)
 
     def __render_analog_clock(self, current_time: ClockTime) -> None:
         fig, ax = plt.subplots(figsize=(6, 6))
@@ -134,7 +161,7 @@ class ClockUI:
         ax.set_aspect("equal")
         ax.axis("off")
 
-        st.pyplot(fig, clear_figure=True, use_container_width=True)
+        st.pyplot(fig, clear_figure=True, width="stretch")
 
     @staticmethod
     def __draw_hand(ax: Axes, angle: float, length: float, width: float, color: str) -> None:
