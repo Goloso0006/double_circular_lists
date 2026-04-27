@@ -162,7 +162,7 @@ class ClockUI:
         ax.text(0, 0.46, "1853", ha="center", va="center", fontsize=9, color="#111111", family="DejaVu Sans")
 
         ax.set_xlim(-1.26, 1.34)
-        ax.set_ylim(-2.08, 2.08)
+        ax.set_ylim(-1.1, 1.07)
         ax.set_aspect("equal")
         ax.axis("off")
 
