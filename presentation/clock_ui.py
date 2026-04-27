@@ -210,8 +210,8 @@ class ClockUI:
                     background: rgba(8, 12, 18, 0.58);
                     border: 1px solid rgba(255, 255, 255, 0.08);
                     border-radius: 20px;
-                    padding-top: 2rem;
-                    padding-bottom: 2rem;
+                    padding-top: 3rem;
+                    padding-bottom: 1rem;
                     box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
                 }}
 
