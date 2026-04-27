@@ -18,7 +18,7 @@ from services.time_service import TimeService
 class ClockUI:
     """Capa de presentacion con Streamlit para visualizar el reloj."""
 
-    BACKGROUND_IMAGE_URL = "https://img.lovepik.com/photo/60179/9447.jpg_wh860.jpg"
+    BACKGROUND_IMAGE_URL = "https://cdn.forbes.com.mx/2021/03/Tissot-reloj-1-e1614642393206.jpg"
 
     def __init__(self) -> None:
         if "engine" not in st.session_state:
@@ -33,7 +33,7 @@ class ClockUI:
     def render(self) -> None:
         st.set_page_config(page_title="Clock", page_icon=":clock9:", layout="centered")
         self.__apply_background_style()
-        st.title("What time is it?") 
+        st.markdown('<h1 class="clock-title">What time is it?</h1>', unsafe_allow_html=True)
 
         if "manual_time" not in st.session_state:
             current = self.__engine.get_current_time()
@@ -104,11 +104,9 @@ class ClockUI:
         fig, ax = plt.subplots(figsize=(5.8, 9.0))
         fig.patch.set_alpha(0.0)
 
-        self.__draw_case_and_strap(ax)
-
-        bezel_outer = Circle((0, 0), 1.03, edgecolor="#8C949B", facecolor="#C7CCD1", linewidth=7, zorder=2)
-        bezel_inner = Circle((0, 0), 0.96, edgecolor="#626971", facecolor="#8A9199", linewidth=2, zorder=3)
-        dial_base = Circle((0, 0), 0.92, edgecolor="#D7DEE4", facecolor="#0F4E75", linewidth=2.2, zorder=3)
+        bezel_outer = Circle((0, 0), 1.03, edgecolor="#C2D7FF", facecolor="#CFE1FF", linewidth=7, zorder=2)
+        bezel_inner = Circle((0, 0), 0.96, edgecolor="#9EA4AD", facecolor="#B9BEC9", linewidth=2, zorder=3)
+        dial_base = Circle((0, 0), 0.92, edgecolor="#D5DCED", facecolor="#0F4E75", linewidth=2.2, zorder=3)
         dial_glow = Circle((0, 0), 0.76, edgecolor="none", facecolor="#165F8E", alpha=0.55, zorder=3)
         ax.add_patch(bezel_outer)
         ax.add_patch(bezel_inner)
@@ -125,7 +123,7 @@ class ClockUI:
             x_end = outer_radius * math.cos(angle)
             y_end = outer_radius * math.sin(angle)
             lw = 2.4 if mark % 5 == 0 else 0.9
-            color = "#E5EBEF" if mark % 5 == 0 else "#9CB2C4"
+            color = "#E5EBEF" if mark % 5 == 0 else "#111111"
             ax.plot([x_start, x_end], [y_start, y_end], color=color, linewidth=lw, solid_capstyle="round", zorder=4)
 
         # Indices horarios con acabado metalico claro.
@@ -138,30 +136,30 @@ class ClockUI:
             x_end = outer_radius * math.cos(angle)
             y_end = outer_radius * math.sin(angle)
             ax.plot([x_start, x_end], [y_start, y_end], color="#E7ECEF", linewidth=5.5, solid_capstyle="round", zorder=6)
-            ax.plot([x_start, x_end], [y_start, y_end], color="#76818B", linewidth=1.2, alpha=0.75, zorder=7)
+            ax.plot([x_start, x_end], [y_start, y_end], color="#111111", linewidth=1.2, alpha=0.90, zorder=7)
 
-        self.__draw_subdial(ax, center=(-0.33, 0.28), radius=0.175)
-        self.__draw_subdial(ax, center=(0.33, 0.28), radius=0.175)
-        self.__draw_subdial(ax, center=(0.0, -0.34), radius=0.185)
+        self.__draw_subdial(ax, center=(-0.29, 0.26), radius=0.175)
+        self.__draw_subdial(ax, center=(0.29, 0.26), radius=0.175)
+        self.__draw_subdial(ax, center=(0.0, -0.30), radius=0.185)
 
         hour_angle = math.radians(90 - ((current_time.hour % 12) * 30 + current_time.minute * 0.5))
         minute_angle = math.radians(90 - (current_time.minute * 6 + current_time.second * 0.1))
         second_angle = math.radians(90 - current_time.second * 6)
 
-        self.__draw_hand(ax, hour_angle, length=0.40, width=6.2, color="#DDE4EA")
-        self.__draw_hand(ax, hour_angle, length=0.40, width=2.0, color="#6D7782")
-        self.__draw_hand(ax, minute_angle, length=0.60, width=4.6, color="#DDE4EA")
-        self.__draw_hand(ax, minute_angle, length=0.60, width=1.4, color="#6D7782")
+        self.__draw_hand(ax, hour_angle, length=0.40, width=4.2, color="#DDE4EA")
+        self.__draw_hand(ax, hour_angle, length=0.40, width=2.0, color="#111111")
+        self.__draw_hand(ax, minute_angle, length=0.60, width=2.6, color="#DDE4EA")
+        self.__draw_hand(ax, minute_angle, length=0.60, width=1.4, color="#111111")
         self.__draw_hand(ax, second_angle, length=0.73, width=1.7, color="#C9D5DF")
-        self.__draw_hand(ax, second_angle, length=0.28, width=2.2, color="#9AA8B5")
+        self.__draw_hand(ax, second_angle, length=0.28, width=2.2, color="#111111")
 
         center_ring = Circle((0, 0), 0.055, edgecolor="#CBD4DC", facecolor="#8D98A3", linewidth=2.0, zorder=20)
         center_core = Circle((0, 0), 0.020, color="#4E5660", zorder=21)
         ax.add_patch(center_ring)
         ax.add_patch(center_core)
 
-        ax.text(0, 0.44, "TISSOT", ha="center", va="center", fontsize=14, color="#F4F7FA", family="DejaVu Serif", fontweight="bold")
-        ax.text(0, 0.36, "1853", ha="center", va="center", fontsize=9, color="#D8E4EF", family="DejaVu Sans")
+        ax.text(0, 0.55, "TISSOT", ha="center", va="center", fontsize=12, color="#111111", family="DejaVu Serif", fontweight="bold")
+        ax.text(0, 0.46, "1853", ha="center", va="center", fontsize=9, color="#111111", family="DejaVu Sans")
 
         ax.set_xlim(-1.26, 1.34)
         ax.set_ylim(-2.08, 2.08)
@@ -179,7 +177,7 @@ class ClockUI:
     @staticmethod
     def __draw_subdial(ax: Axes, center: tuple[float, float], radius: float) -> None:
         cx, cy = center
-        ring = Circle((cx, cy), radius, edgecolor="#CAD6E0", facecolor="#1C628F", linewidth=2.0, zorder=3)
+        ring = Circle((cx, cy), radius, edgecolor="#111111", alpha=0.9, facecolor="#1C628F", linewidth=2.0, zorder=3)
         fill = Circle((cx, cy), radius * 0.78, edgecolor="none", facecolor="#0E4F78", zorder=3)
         ax.add_patch(ring)
         ax.add_patch(fill)
@@ -192,84 +190,7 @@ class ClockUI:
             y0 = cy + inner * math.sin(angle)
             x1 = cx + outer * math.cos(angle)
             y1 = cy + outer * math.sin(angle)
-            ax.plot([x0, x1], [y0, y1], color="#B8C7D3", linewidth=0.9, alpha=0.85, zorder=4)
-
-    @staticmethod
-    def __draw_case_and_strap(ax: Axes) -> None:
-        case = FancyBboxPatch(
-            (-1.02, -1.18),
-            2.04,
-            2.36,
-            boxstyle="round,pad=0.02,rounding_size=0.30",
-            linewidth=2.8,
-            edgecolor="#6A7179",
-            facecolor="#B9C0C7",
-            zorder=1,
-        )
-        ax.add_patch(case)
-
-        lug_top = Rectangle((-0.30, 1.18), 0.60, 0.10, linewidth=0, facecolor="#9AA2AA", zorder=1)
-        lug_bottom = Rectangle((-0.30, -1.28), 0.60, 0.10, linewidth=0, facecolor="#9AA2AA", zorder=1)
-        ax.add_patch(lug_top)
-        ax.add_patch(lug_bottom)
-
-        strap_top = FancyBboxPatch(
-            (-0.36, 1.28),
-            0.72,
-            0.78,
-            boxstyle="round,pad=0.02,rounding_size=0.12",
-            linewidth=2.0,
-            edgecolor="#6D747D",
-            facecolor="#BDC4CB",
-            zorder=0,
-        )
-        strap_bottom = FancyBboxPatch(
-            (-0.36, -2.06),
-            0.72,
-            0.78,
-            boxstyle="round,pad=0.02,rounding_size=0.12",
-            linewidth=2.0,
-            edgecolor="#6D747D",
-            facecolor="#BDC4CB",
-            zorder=0,
-        )
-        ax.add_patch(strap_top)
-        ax.add_patch(strap_bottom)
-
-        for idx in range(6):
-            y_top = 1.34 + idx * 0.11
-            y_bottom = -1.95 + idx * 0.11
-            top_link = Rectangle((-0.30, y_top), 0.60, 0.07, linewidth=0.8, edgecolor="#7E8790", facecolor="#D0D6DB", zorder=1)
-            bottom_link = Rectangle((-0.30, y_bottom), 0.60, 0.07, linewidth=0.8, edgecolor="#7E8790", facecolor="#D0D6DB", zorder=1)
-            ax.add_patch(top_link)
-            ax.add_patch(bottom_link)
-
-        upper_pusher = FancyBboxPatch(
-            (1.03, 0.35),
-            0.22,
-            0.12,
-            boxstyle="round,pad=0.01,rounding_size=0.04",
-            linewidth=1.5,
-            edgecolor="#6E767F",
-            facecolor="#B4BBC3",
-            zorder=1,
-        )
-        lower_pusher = FancyBboxPatch(
-            (1.03, -0.47),
-            0.22,
-            0.12,
-            boxstyle="round,pad=0.01,rounding_size=0.04",
-            linewidth=1.5,
-            edgecolor="#6E767F",
-            facecolor="#B4BBC3",
-            zorder=1,
-        )
-        crown = Circle((1.06, 0.0), 0.13, edgecolor="#656D76", facecolor="#AAB2BA", linewidth=2.0, zorder=1)
-        crown_inner = Circle((1.06, 0.0), 0.07, edgecolor="#85909A", facecolor="#D1D7DC", linewidth=1.2, zorder=1)
-        ax.add_patch(upper_pusher)
-        ax.add_patch(lower_pusher)
-        ax.add_patch(crown)
-        ax.add_patch(crown_inner)
+            ax.plot([x0, x1], [y0, y1], color="#111111", linewidth=0.9, alpha=0.85, zorder=4)
 
     def __apply_background_style(self) -> None:
         st.markdown(
@@ -296,6 +217,13 @@ class ClockUI:
 
                 h1, h2, h3, p, label, div {{
                     color: #F2F5F8 !important;
+                }}
+
+                .clock-title {{
+                    text-align: center;
+                    margin: 0 0 1rem 0;
+                    font-size: 2.5rem;
+                    letter-spacing: 0.04em;
                 }}
 
                 .stButton > button {{
