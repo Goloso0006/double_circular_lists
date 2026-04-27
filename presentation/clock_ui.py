@@ -150,8 +150,8 @@ class ClockUI:
         self.__draw_hand(ax, hour_angle, length=0.40, width=2.0, color="#111111")
         self.__draw_hand(ax, minute_angle, length=0.60, width=2.6, color="#DDE4EA")
         self.__draw_hand(ax, minute_angle, length=0.60, width=1.4, color="#111111")
-        self.__draw_hand(ax, second_angle, length=0.73, width=1.7, color="#C9D5DF")
-        self.__draw_hand(ax, second_angle, length=0.28, width=2.2, color="#111111")
+        self.__draw_hand(ax, second_angle, length=0.73, width=2.0, color="#C9D5DF")
+        self.__draw_hand(ax, second_angle, length=0.73, width=1.0, color="#111111")
 
         center_ring = Circle((0, 0), 0.055, edgecolor="#CBD4DC", facecolor="#8D98A3", linewidth=2.0, zorder=20)
         center_core = Circle((0, 0), 0.020, color="#4E5660", zorder=21)
