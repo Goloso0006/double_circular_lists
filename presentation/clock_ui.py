@@ -26,16 +26,15 @@ class ClockUI:
         self.__engine: ClockEngine = st.session_state.engine
 
     def render(self) -> None:
-        st.set_page_config(page_title="Circular Analog Clock", page_icon=":clock9:", layout="centered")
-        st.title("Reloj Analogico con Lista Circular Doble")
-        st.caption("Simulacion orientada a objetos con estructura de datos circular")
+        st.set_page_config(page_title="Clock", page_icon=":clock9:", layout="centered")
+        st.title("What time is it?") 
 
         if "manual_time" not in st.session_state:
             current = self.__engine.get_current_time()
             st.session_state.manual_time = current.to_24_hour_format()
 
         st.session_state.manual_time = st.text_input(
-            "Hora manual (HH:MM:SS)",
+            "Establecer hora manual (HH:MM:SS)",
             value=st.session_state.manual_time,
             max_chars=8,
             help="Ejemplo: 14:35:09",
@@ -103,18 +102,18 @@ class ClockUI:
         ax.add_patch(face)
 
         number_colors = {
-            1: "#8B8E2F",
-            2: "#D6452A",
-            3: "#A62B3A",
-            4: "#5A3D63",
-            5: "#8B8E2F",
-            6: "#D6452A",
-            7: "#A62B3A",
-            8: "#5A3D63",
-            9: "#8B8E2F",
-            10: "#D6452A",
-            11: "#A62B3A",
-            12: "#5A3D63",
+            1: "#404085",
+            2: "#1A1A52",
+            3: "#404085",
+            4: "#1A1A52",
+            5: "#404085",
+            6: "#1A1A52",
+            7: "#404085",
+            8: "#1A1A52",
+            9: "#404085",
+            10: "#1A1A52",
+            11: "#404085",
+            12: "#1A1A52",
         }
 
         for hour in range(1, 13):
@@ -154,7 +153,7 @@ class ClockUI:
 
         center = plt.Circle((0, 0), 0.03, color="black")
         ax.add_patch(center)
-        ax.text(0, 0.5, "CLOCK APP", ha="center", va="center", fontsize=11, color="black", family="DejaVu Sans")
+        ax.text(0, 0.5, "TISSOT", ha="center", va="center", fontsize=11, color="black", family="DejaVu Sans")
 
         ax.set_xlim(-1.1, 1.1)
         ax.set_ylim(-1.1, 1.1)
