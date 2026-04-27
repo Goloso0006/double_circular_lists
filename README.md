@@ -1,199 +1,90 @@
-# Clock App - Analog Clock with Circular Doubly Linked Lists
+# Clock App - Reloj Analogico con Lista Doblemente Enlazada Circular
 
-## Overview
+## Descripcion
+Este proyecto simula un reloj analogico en Python usando una lista doblemente enlazada circular para modelar el comportamiento ciclico de:
 
-This project implements an analog clock simulation using advanced data structures in Python.
-The core structure is a circular doubly linked list, used to represent the cyclic behavior of hours, minutes, and seconds.
+- Horas (0-23)
+- Minutos (0-59)
+- Segundos (0-59)
 
-The architecture follows layered design and Object-Oriented Programming principles:
-
-- High cohesion per class
-- Single responsibility per layer
-- Decoupled UI and business logic
+La app tiene una interfaz en Streamlit con personalizacion visual del reloj (fondo, esfera y controles), separada por capas para mantener el codigo ordenado.
 
 ---
 
-## Folder Structure
+## Estructura Del Proyecto
 
-- `domain/`
-  - Contains core business abstractions and pure domain objects.
-  - No external dependencies to frameworks or UI.
+### application/
+Contiene la logica de aplicacion.
 
-- `application/`
-  - Contains application orchestration logic.
-  - Coordinates domain entities and services through use-case style operations.
+- `clock_engine.py`: motor principal del reloj. Sincroniza hora, avanza (`tick`), retrocede y entrega el tiempo actual.
+- `__init__.py`: inicializacion del paquete.
 
-- `services/`
-  - Contains adapters to external systems, such as system time.
-  - Keeps infrastructure concerns out of domain logic.
+### domain/
+Contiene el nucleo del dominio (sin dependencia de UI).
 
-- `presentation/`
-  - Contains Streamlit UI logic.
-  - Only consumes application services and displays results.
+- `entities/time_node.py`: nodo de la lista enlazada (valor, next, prev).
+- `entities/clock_hand.py`: representa cada aguja y su posicion actual sobre la lista circular.
+- `structures/circular_doubly_linked_list.py`: estructura circular doblemente enlazada y operaciones de navegacion.
+- `value_objects/clock_time.py`: objeto de valor para hora, minuto y segundo, con formatos de salida.
+- `__init__.py`: inicializacion del paquete.
 
-- `config/`
-  - Reserved for environment/configuration files.
-  - Useful for future scalability (settings, constants, app config).
+### services/
+Servicios externos al dominio.
 
----
+- `time_service.py`: obtiene la hora real del sistema y la adapta al modelo interno.
+- `__init__.py`: inicializacion del paquete.
 
-## File-by-File Explanation
+### presentation/
+Capa visual (interfaz de usuario).
 
-### domain/entities/time_node.py
-- Purpose:
-  - Defines `TimeNode`, the atomic unit for linked-list storage.
-- Responsibilities:
-  - Encapsulates node value.
-  - Stores next and previous references.
-- Relations:
-  - Used by `CircularDoublyLinkedList`.
+- `clock_ui.py`: UI principal en Streamlit. Renderiza controles, entrada manual de hora y el reloj analogico personalizado.
+- `streamlit_app.py`: punto de entrada para lanzar la interfaz.
+- `__init__.py`: inicializacion del paquete.
 
-### domain/structures/circular_doubly_linked_list.py
-- Purpose:
-  - Implements a circular doubly linked list.
-- Responsibilities:
-  - Append nodes while preserving circular links.
-  - Traverse forward and backward.
-  - Find a node by value.
-- Relations:
-  - Uses `TimeNode`.
-  - Serves `ClockHand` with cyclic value navigation.
+### Archivos En La Raiz
 
-### domain/entities/clock_hand.py
-- Purpose:
-  - Models a clock hand over a circular doubly linked list.
-- Responsibilities:
-  - Move forward and backward one position.
-  - Expose current value.
-- Relations:
-  - Consumes `CircularDoublyLinkedList` and its nodes.
-  - Used by `ClockEngine` for hour/minute/second state.
-
-### domain/value_objects/clock_time.py
-- Purpose:
-  - Immutable representation of a time snapshot.
-- Responsibilities:
-  - Store hour, minute, second.
-  - Format output in 12h and 24h forms.
-- Relations:
-  - Exchanged between `TimeService`, `ClockEngine`, and UI.
-
-### services/time_service.py
-- Purpose:
-  - Obtain current real system time.
-- Responsibilities:
-  - Map `datetime.now()` into `ClockTime`.
-- Relations:
-  - Injected into `ClockEngine` to avoid direct infrastructure coupling.
-
-### application/clock_engine.py
-- Purpose:
-  - Coordinate the full clock behavior.
-- Responsibilities:
-  - Build circular ranges for hours/minutes/seconds.
-  - Synchronize initial or real time.
-  - Advance one second (`tick`) and propagate carry to minute/hour.
-  - Move backward one second.
-  - Return current simulated time.
-- Relations:
-  - Uses `ClockHand`, `CircularDoublyLinkedList`, and `TimeService`.
-
-### presentation/clock_ui.py
-- Purpose:
-  - Provide Streamlit interface for live simulation.
-- Responsibilities:
-  - Render controls (start, pause, sync, step back).
-  - Show simulated time in 24h and 12h.
-  - Trigger periodic updates while running.
-- Relations:
-  - Uses `ClockEngine` as backend boundary.
-
-### presentation/streamlit_app.py
-- Purpose:
-  - Main Streamlit execution entrypoint.
-- Responsibilities:
-  - Delegate startup to `ClockUI`.
-- Relations:
-  - Imports and runs `main()` from `presentation/clock_ui.py`.
-
-### tests/test_circular_doubly_linked_list.py
-- Purpose:
-  - Validate the linked-list implementation behavior.
-- Responsibilities:
-  - Verify forward traversal, backward traversal, and strict circular linkage integrity.
-- Relations:
-  - Tests `CircularDoublyLinkedList` directly.
-
-### tests/test_clock_engine.py
-- Purpose:
-  - Validate clock transitions and edge cases.
-- Responsibilities:
-  - Verify second rollover, minute rollover, full-day rollover, and full backward rollover.
-- Relations:
-  - Tests `ClockEngine` using a fake time service.
+- `run_clock_app.bat`: script rapido para ejecutar la app en Windows.
+- `README.md`: documentacion del proyecto.
+- `.gitignore`: archivos ignorados por Git.
 
 ---
 
-## Conceptual Explanation
+## Como Funciona El Reloj
 
-### Why Circular Doubly Linked List?
+1. Se crean tres listas circulares para horas, minutos y segundos.
+2. Cada aguja (`ClockHand`) apunta a un nodo actual.
+3. Al ejecutar `tick()`:
+- La aguja de segundos avanza una posicion.
+- Si pasa de 59 a 00, avanza minutos.
+- Si minutos pasa de 59 a 00, avanza horas.
 
-A clock is inherently cyclic:
-
-- Seconds: 59 -> 00
-- Minutes: 59 -> 00
-- Hours: 23 -> 00
-
-A circular list models this naturally because the last node points to the first, removing edge-case resets. The doubly linked variant also allows backward movement efficiently.
-
-### How the Clock Is Modeled
-
-- Three circular doubly linked lists represent possible values:
-  - Hours: 0..23
-  - Minutes: 0..59
-  - Seconds: 0..59
-- Each hand (`ClockHand`) points to one current node.
-- `tick()` moves second hand one node ahead.
-  - If second rolls over (59 -> 00), minute moves.
-  - If minute also rolls over, hour moves.
-
-### Advantages of This Design
-
-- Natural representation of cyclic time progression.
-- O(1) step movement for each hand.
-- Clear separation of concerns for maintainability.
-- Easy extension (alarms, timezone offsets, chronometer modes).
+Esto evita condicionales complejos de reinicio porque la estructura circular ya representa el ciclo natural del tiempo.
 
 ---
 
-## Run Instructions
+## Ejecucion
 
-1. Install dependencies:
+### Opcion 1 (recomendada en Windows)
+```bash
+./run_clock_app.bat
+```
 
+### Opcion 2 (manual)
+1. Instalar dependencias:
 ```bash
 pip install streamlit matplotlib
 ```
 
-2. Run UI from project root:
-
+2. Ejecutar Streamlit:
 ```bash
 streamlit run presentation/streamlit_app.py
 ```
 
-3. Run unit tests:
-
-```bash
-python -m unittest discover -s tests -p "test_*.py"
-```
-
 ---
 
-## Notes
+## Cambios Visuales Implementados
 
-- Code is in English.
-- Comments are in Spanish, as requested.
-- UI is implemented only with Python + Streamlit.
-
-
-# execution
-./run_clock_app.bat
+- Interfaz en Streamlit con fondo de imagen y capa oscura para mejorar legibilidad.
+- Reloj analogico estilizado (esfera, indices, subesferas y agujas).
+- Control de ejecucion con boton de estado (iniciar/pausar/reanudar).
+- Entrada manual de hora para sincronizar rapidamente.
